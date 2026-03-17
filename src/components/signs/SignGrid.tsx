@@ -21,8 +21,15 @@ export default function SignGrid({ catalog }: { catalog: SignCatalogEntry[] }) {
     return [...catalog].sort((a, b) => {
       const aIsLetter = /^[A-Z]$/.test(a.name);
       const bIsLetter = /^[A-Z]$/.test(b.name);
+      const aIsNumber = /^\d+$/.test(a.name);
+      const bIsNumber = /^\d+$/.test(b.name);
+      // Alphabet first, then numbers, then everything else
       if (aIsLetter && !bIsLetter) return -1;
       if (!aIsLetter && bIsLetter) return 1;
+      if (aIsNumber && !bIsNumber) return -1;
+      if (!aIsNumber && bIsNumber) return 1;
+      // Sort numbers numerically
+      if (aIsNumber && bIsNumber) return parseInt(a.name) - parseInt(b.name);
       return a.name.localeCompare(b.name);
     });
   }, [catalog]);
