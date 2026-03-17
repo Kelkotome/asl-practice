@@ -17,15 +17,25 @@ export default function SignGrid({ catalog }: { catalog: SignCatalogEntry[] }) {
 
   const semanticFields = useMemo(() => getSemanticFields(catalog), [catalog]);
 
+  const sortedCatalog = useMemo(() => {
+    return [...catalog].sort((a, b) => {
+      const aIsLetter = /^[A-Z]$/.test(a.name);
+      const bIsLetter = /^[A-Z]$/.test(b.name);
+      if (aIsLetter && !bIsLetter) return -1;
+      if (!aIsLetter && bIsLetter) return 1;
+      return a.name.localeCompare(b.name);
+    });
+  }, [catalog]);
+
   const results = useMemo(() => {
-    let signs = query ? searchSigns(catalog, query) : catalog;
+    let signs = query ? searchSigns(catalog, query) : sortedCatalog;
     signs = filterSigns(signs, {
       semanticField: semanticField || undefined,
       difficulty: difficulty || undefined,
       hasVideo: hasVideo || undefined,
     });
     return signs;
-  }, [catalog, query, semanticField, difficulty, hasVideo]);
+  }, [catalog, sortedCatalog, query, semanticField, difficulty, hasVideo]);
 
   // Reset page when filters change
   const totalPages = Math.ceil(results.length / PAGE_SIZE);

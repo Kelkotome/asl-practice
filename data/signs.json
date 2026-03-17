@@ -32576,5 +32576,105 @@
     "frequency": 1,
     "frequencyLabel": "Rare",
     "hasLexData": true
+  },
+  {
+    "slug": "b",
+    "name": "B",
+    "videoId": null,
+    "semanticField": "Alphabet",
+    "lexicalClass": "Fingerspelling",
+    "difficulty": 1,
+    "signType": "One-Handed",
+    "hasLexData": false
+  },
+  {
+    "slug": "c",
+    "name": "C",
+    "videoId": null,
+    "semanticField": "Alphabet",
+    "lexicalClass": "Fingerspelling",
+    "difficulty": 1,
+    "signType": "One-Handed",
+    "hasLexData": false
+  },
+  {
+    "slug": "f",
+    "name": "F",
+    "videoId": null,
+    "semanticField": "Alphabet",
+    "lexicalClass": "Fingerspelling",
+    "difficulty": 1,
+    "signType": "One-Handed",
+    "hasLexData": false
+  },
+  {
+    "slug": "l",
+    "name": "L",
+    "videoId": null,
+    "semanticField": "Alphabet",
+    "lexicalClass": "Fingerspelling",
+    "difficulty": 1,
+    "signType": "One-Handed",
+    "hasLexData": false
+  },
+  {
+    "slug": "q",
+    "name": "Q",
+    "videoId": null,
+    "semanticField": "Alphabet",
+    "lexicalClass": "Fingerspelling",
+    "difficulty": 1,
+    "signType": "One-Handed",
+    "hasLexData": false
+  },
+  {
+    "slug": "u",
+    "name": "U",
+    "videoId": null,
+    "semanticField": "Alphabet",
+    "lexicalClass": "Fingerspelling",
+    "difficulty": 1,
+    "signType": "One-Handed",
+    "hasLexData": false
+  },
+  {
+    "slug": "v",
+    "name": "V",
+    "videoId": null,
+    "semanticField": "Alphabet",
+    "lexicalClass": "Fingerspelling",
+    "difficulty": 1,
+    "signType": "One-Handed",
+    "hasLexData": false
+  },
+  {
+    "slug": "w",
+    "name": "W",
+    "videoId": null,
+    "semanticField": "Alphabet",
+    "lexicalClass": "Fingerspelling",
+    "difficulty": 1,
+    "signType": "One-Handed",
+    "hasLexData": false
+  },
+  {
+    "slug": "y",
+    "name": "Y",
+    "videoId": null,
+    "semanticField": "Alphabet",
+    "lexicalClass": "Fingerspelling",
+    "difficulty": 1,
+    "signType": "One-Handed",
+    "hasLexData": false
+  },
+  {
+    "slug": "z",
+    "name": "Z",
+    "videoId": null,
+    "semanticField": "Alphabet",
+    "lexicalClass": "Fingerspelling",
+    "difficulty": 1,
+    "signType": "One-Handed",
+    "hasLexData": false
   }
 ]
