@@ -19,5 +19,5 @@ build/
 *.tsbuildinfo
 next-env.d.ts
 
-# data (generated, large)
-data/sign-details/
+# data (regenerate with: npm run export-signs)
+# data/sign-details/
