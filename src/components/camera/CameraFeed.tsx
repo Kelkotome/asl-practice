@@ -8,9 +8,10 @@ import CaptureButton from "./CaptureButton";
 
 interface CameraFeedProps {
   onRecordingComplete: (frames: LandmarkFrame[], duration: number) => void;
+  onStateChange?: (state: "idle" | "streaming" | "recording") => void;
 }
 
-export default function CameraFeed({ onRecordingComplete }: CameraFeedProps) {
+export default function CameraFeed({ onRecordingComplete, onStateChange }: CameraFeedProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [handLandmarker, setHandLandmarker] = useState<HandLandmarker | null>(null);
   const [currentLandmarks, setCurrentLandmarks] = useState<
@@ -65,6 +66,7 @@ export default function CameraFeed({ onRecordingComplete }: CameraFeedProps) {
           height: videoRef.current.videoHeight || 480,
         });
         setIsStreaming(true);
+        onStateChange?.("streaming");
       }
     } catch (err) {
       const name = err instanceof DOMException ? err.name : "";
@@ -128,13 +130,15 @@ export default function CameraFeed({ onRecordingComplete }: CameraFeedProps) {
     recordingStart.current = performance.now();
     lastSampleTime.current = 0;
     setIsRecording(true);
-  }, []);
+    onStateChange?.("recording");
+  }, [onStateChange]);
 
   const handleStopRecording = useCallback(() => {
     setIsRecording(false);
+    onStateChange?.("streaming");
     const duration = (performance.now() - recordingStart.current) / 1000;
     onRecordingComplete(recordedFrames.current, duration);
-  }, [onRecordingComplete]);
+  }, [onRecordingComplete, onStateChange]);
 
   if (error === "mediapipe") {
     return (

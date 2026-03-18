@@ -28,6 +28,7 @@ export default function PracticeClient({ sign, relatedSigns = [] }: PracticeClie
     frames: LandmarkFrame[];
     duration: number;
   } | null>(null);
+  const [cameraState, setCameraState] = useState<"idle" | "streaming" | "recording">("idle");
   const { record: recordProgress } = useRecordPractice(sign.slug);
   const { showOnboarding, complete: completeOnboarding } = useOnboarding();
   const searchParams = useSearchParams();
@@ -222,7 +223,7 @@ export default function PracticeClient({ sign, relatedSigns = [] }: PracticeClie
         {/* Center: Camera */}
         <div className="space-y-3 sm:space-y-4">
           <h2 className="font-semibold text-base sm:text-lg">Your Camera</h2>
-          <CameraFeed onRecordingComplete={handleRecordingComplete} />
+          <CameraFeed onRecordingComplete={handleRecordingComplete} onStateChange={setCameraState} />
         </div>
 
         {/* Right: Feedback — full width on mobile/tablet, third column on desktop */}
@@ -233,25 +234,56 @@ export default function PracticeClient({ sign, relatedSigns = [] }: PracticeClie
             aria-live="polite"
             aria-busy={isLoading}
           >
-            {!recordedData && !feedback && (
-              <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base">
-                Record yourself signing &quot;{sign.name}&quot; to get
-                personalized feedback.
-              </p>
+            {!recordedData && !feedback && cameraState === "idle" && (
+              <div className="text-center space-y-2">
+                <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base">
+                  Watch the reference video, then start your camera to practice.
+                </p>
+                <p className="text-xs text-gray-400 dark:text-gray-500">
+                  Step 1 of 3
+                </p>
+              </div>
+            )}
+
+            {!recordedData && !feedback && cameraState === "streaming" && (
+              <div className="text-center space-y-2">
+                <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base font-medium">
+                  Camera is ready!
+                </p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Hit <span className="font-medium text-brand-600">&quot;Record Sign&quot;</span> below your camera, then sign &quot;{sign.name}&quot;.
+                </p>
+                <p className="text-xs text-gray-400 dark:text-gray-500">
+                  Step 2 of 3
+                </p>
+              </div>
+            )}
+
+            {!recordedData && !feedback && cameraState === "recording" && (
+              <div className="text-center space-y-2">
+                <p className="text-brand-600 dark:text-brand-400 text-sm sm:text-base font-medium animate-pulse">
+                  Recording... sign &quot;{sign.name}&quot; now!
+                </p>
+                <p className="text-xs text-gray-400 dark:text-gray-500">
+                  Step 2 of 3
+                </p>
+              </div>
             )}
 
             {recordedData && !feedback && !isLoading && (
-              <div className="space-y-3">
-                <p className="text-gray-600 dark:text-gray-400 text-sm">
-                  Captured {recordedData.frames.length} frames over{" "}
-                  {recordedData.duration.toFixed(1)}s.
+              <div className="space-y-3 text-center">
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium">
+                  Nice! Captured {recordedData.frames.length} frames ({recordedData.duration.toFixed(1)}s).
                 </p>
                 <button
                   onClick={requestFeedback}
-                  className="px-6 py-3 bg-brand-600 text-white rounded-lg font-medium hover:bg-brand-700 transition-colors w-full"
+                  className="px-6 py-3 bg-brand-600 text-white rounded-lg font-medium hover:bg-brand-700 active:bg-brand-800 transition-colors w-full min-h-[44px]"
                 >
                   Get Feedback
                 </button>
+                <p className="text-xs text-gray-400 dark:text-gray-500">
+                  Step 3 of 3
+                </p>
               </div>
             )}
 
