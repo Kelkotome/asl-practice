@@ -127,6 +127,24 @@ export default function PracticeClient({ sign, relatedSigns = [] }: PracticeClie
         )}
       </div>
 
+      {/* Step guide */}
+      <div className="mb-6 flex items-center gap-4 text-sm">
+        <div className={`flex items-center gap-2 ${!recordedData && !feedback ? "text-brand-600 font-semibold" : "text-gray-400"}`}>
+          <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${!recordedData && !feedback ? "bg-brand-600 text-white" : "bg-gray-200 dark:bg-gray-700 text-gray-500"}`}>1</span>
+          Watch the video
+        </div>
+        <div className="h-px w-6 bg-gray-300 dark:bg-gray-700" />
+        <div className={`flex items-center gap-2 ${recordedData && !feedback ? "text-brand-600 font-semibold" : "text-gray-400"}`}>
+          <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${recordedData && !feedback ? "bg-brand-600 text-white" : "bg-gray-200 dark:bg-gray-700 text-gray-500"}`}>2</span>
+          Record your sign
+        </div>
+        <div className="h-px w-6 bg-gray-300 dark:bg-gray-700" />
+        <div className={`flex items-center gap-2 ${feedback ? "text-brand-600 font-semibold" : "text-gray-400"}`}>
+          <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${feedback ? "bg-brand-600 text-white" : "bg-gray-200 dark:bg-gray-700 text-gray-500"}`}>3</span>
+          Get feedback
+        </div>
+      </div>
+
       {/* Three-panel layout */}
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Left: Reference video */}
