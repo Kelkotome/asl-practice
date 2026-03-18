@@ -138,6 +138,7 @@ export default function CameraFeed({ onRecordingComplete }: CameraFeedProps) {
           <button
             onClick={startCamera}
             disabled={!handLandmarker}
+            aria-label={handLandmarker ? "Start camera for sign practice" : "Loading hand detection model"}
             className="px-6 py-3 bg-brand-600 text-white rounded-lg font-medium hover:bg-brand-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {handLandmarker ? "Start Camera" : "Loading hand detection..."}
@@ -151,6 +152,7 @@ export default function CameraFeed({ onRecordingComplete }: CameraFeedProps) {
           style={{ transform: "scaleX(-1)" }}
           playsInline
           muted
+          aria-label="Camera feed for sign practice"
         />
         <div style={{ transform: "scaleX(-1)" }}>
           <HandOverlay
@@ -160,8 +162,12 @@ export default function CameraFeed({ onRecordingComplete }: CameraFeedProps) {
           />
         </div>
         {isRecording && (
-          <div className="absolute top-4 left-4 flex items-center gap-2 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-            <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
+          <div
+            className="absolute top-4 left-4 flex items-center gap-2 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-medium"
+            aria-live="assertive"
+            role="status"
+          >
+            <span className="w-2 h-2 bg-white rounded-full animate-pulse" aria-hidden="true" />
             Recording
           </div>
         )}

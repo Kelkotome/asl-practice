@@ -2,6 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import type { Metadata } from "next";
 import type { SignDetail, SignCatalogEntry } from "@/lib/signs/types";
+import { getRelatedSigns } from "@/lib/signs/related";
 import PracticeClient from "./PracticeClient";
 
 interface PageProps {
@@ -38,9 +39,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const sign = loadSignDetail(params.slug);
   if (!sign) return { title: "Sign Not Found" };
 
+  const title = `Practice "${sign.name}" in ASL — ASL Practice`;
+  const description = `Practice the ASL sign for "${sign.name}" with real-time camera feedback and AI coaching. ${sign.signType || ""} sign${sign.majorLocation ? `, location: ${sign.majorLocation}` : ""}.`;
+
   return {
-    title: `Practice "${sign.name}" in ASL — ASL Practice`,
-    description: `Practice the ASL sign for "${sign.name}" with real-time camera feedback and AI coaching. ${sign.signType || ""} sign${sign.majorLocation ? `, location: ${sign.majorLocation}` : ""}.`,
+    title,
+    description,
+    openGraph: {
+      url: `https://practice.deafened.org/signs/${sign.slug}`,
+      title,
+      description,
+    },
   };
 }
 
@@ -58,5 +67,40 @@ export default async function PracticePage({ params }: PageProps) {
     );
   }
 
-  return <PracticeClient sign={sign} />;
+  const catalog = loadCatalog();
+  const relatedSigns = getRelatedSigns(sign, catalog, 6);
+
+  const howToSchema = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: `How to sign "${sign.name}" in ASL`,
+    description: `Learn the ASL sign for "${sign.name}" with video reference and AI coaching.`,
+    step: [
+      {
+        "@type": "HowToStep",
+        name: "Watch the reference video",
+        text: `Watch the reference video for the sign "${sign.name}" to see the correct handshape, movement, and location.`,
+      },
+      {
+        "@type": "HowToStep",
+        name: "Practice with your camera",
+        text: "Turn on your camera and attempt the sign. MediaPipe will track your hand landmarks in real time.",
+      },
+      {
+        "@type": "HowToStep",
+        name: "Get AI coaching feedback",
+        text: "Receive personalized feedback comparing your attempt against ASL-LEX phonological data.",
+      },
+    ],
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(howToSchema) }}
+      />
+      <PracticeClient sign={sign} relatedSigns={relatedSigns} />
+    </>
+  );
 }

@@ -45,7 +45,14 @@ export default function CaptureButton({
     <div className="flex items-center justify-center gap-4">
       {isRecording ? (
         <>
-          <div className="w-32 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+          <div
+            className="w-32 bg-gray-200 dark:bg-gray-700 rounded-full h-2"
+            role="progressbar"
+            aria-valuenow={Math.round((elapsed / maxDuration) * 100)}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label="Recording progress"
+          >
             <div
               className="bg-red-500 h-2 rounded-full transition-all"
               style={{ width: `${(elapsed / maxDuration) * 100}%` }}
@@ -53,6 +60,7 @@ export default function CaptureButton({
           </div>
           <button
             onClick={onStop}
+            aria-label={`Stop recording, ${Math.ceil(maxDuration - elapsed)} seconds remaining`}
             className="px-6 py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors"
           >
             Stop ({Math.ceil(maxDuration - elapsed)}s)
@@ -61,6 +69,7 @@ export default function CaptureButton({
       ) : (
         <button
           onClick={onStart}
+          aria-label={`Start recording sign, up to ${maxDuration} seconds`}
           className="px-6 py-3 bg-brand-600 text-white rounded-lg font-medium hover:bg-brand-700 transition-colors"
         >
           Record Sign (up to {maxDuration}s)

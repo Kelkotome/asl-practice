@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "export-signs": "tsx scripts/export-signs.ts --source .."
+    "export-signs": "tsx scripts/export-signs.ts --source ..",
+    "generate-redirects": "tsx scripts/generate-redirects.ts --source .."
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

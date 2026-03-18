@@ -1,14 +1,24 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import type { SignDetail, LandmarkFrame } from "@/lib/signs/types";
+import type { SignDetail, SignCatalogEntry, LandmarkFrame } from "@/lib/signs/types";
 import CameraFeed from "@/components/camera/CameraFeed";
 import ReferencePlayer from "@/components/video/ReferencePlayer";
 import DifficultyBadge from "@/components/signs/DifficultyBadge";
+import RelatedSigns from "@/components/signs/RelatedSigns";
 import ReactMarkdown from "react-markdown";
 import Link from "next/link";
+import { useRecordPractice } from "@/lib/progress/hooks";
+import { useOnboarding } from "@/lib/onboarding/hooks";
+import OnboardingModal from "@/components/onboarding/OnboardingModal";
+import StreakBadge from "@/components/progress/StreakBadge";
 
-export default function PracticeClient({ sign }: { sign: SignDetail }) {
+interface PracticeClientProps {
+  sign: SignDetail;
+  relatedSigns?: SignCatalogEntry[];
+}
+
+export default function PracticeClient({ sign, relatedSigns = [] }: PracticeClientProps) {
   const [feedback, setFeedback] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -16,14 +26,17 @@ export default function PracticeClient({ sign }: { sign: SignDetail }) {
     frames: LandmarkFrame[];
     duration: number;
   } | null>(null);
+  const { record: recordProgress } = useRecordPractice(sign.slug);
+  const { showOnboarding, complete: completeOnboarding } = useOnboarding();
 
   const handleRecordingComplete = useCallback(
     (frames: LandmarkFrame[], duration: number) => {
       setRecordedData({ frames, duration });
       setFeedback("");
       setError(null);
+      recordProgress();
     },
-    []
+    [recordProgress]
   );
 
   const requestFeedback = useCallback(async () => {
@@ -70,6 +83,8 @@ export default function PracticeClient({ sign }: { sign: SignDetail }) {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {showOnboarding && <OnboardingModal onComplete={completeOnboarding} />}
+
       {/* Header */}
       <div className="mb-6 flex items-start justify-between">
         <div>
@@ -81,9 +96,12 @@ export default function PracticeClient({ sign }: { sign: SignDetail }) {
               &larr; All Signs
             </Link>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-            {sign.name}
-          </h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+              {sign.name}
+            </h1>
+            <StreakBadge />
+          </div>
           <div className="flex items-center gap-3 mt-2">
             <DifficultyBadge difficulty={sign.difficulty} />
             {sign.signType && (
@@ -149,7 +167,11 @@ export default function PracticeClient({ sign }: { sign: SignDetail }) {
         {/* Right: Feedback */}
         <div className="space-y-4">
           <h2 className="font-semibold text-lg">AI Coaching</h2>
-          <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-6">
+          <div
+            className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-6"
+            aria-live="polite"
+            aria-busy={isLoading}
+          >
             {!recordedData && !feedback && (
               <p className="text-gray-500 dark:text-gray-400">
                 Record yourself signing &quot;{sign.name}&quot; to get
@@ -205,6 +227,8 @@ export default function PracticeClient({ sign }: { sign: SignDetail }) {
           </div>
         </div>
       </div>
+
+      <RelatedSigns signs={relatedSigns} />
     </div>
   );
 }

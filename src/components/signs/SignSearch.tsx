@@ -26,9 +26,11 @@ export default function SignSearch({
   resultCount,
 }: SignSearchProps) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" role="search" aria-label="Search and filter ASL signs">
       <div>
+        <label htmlFor="sign-search" className="sr-only">Search signs</label>
         <input
+          id="sign-search"
           type="text"
           value={query}
           onChange={(e) => onQueryChange(e.target.value)}
@@ -38,7 +40,9 @@ export default function SignSearch({
       </div>
 
       <div className="flex flex-wrap gap-3 items-center">
+        <label htmlFor="semantic-field-filter" className="sr-only">Filter by topic</label>
         <select
+          id="semantic-field-filter"
           value={semanticField}
           onChange={(e) => onSemanticFieldChange(e.target.value)}
           className="px-3 py-1.5 rounded border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm"
@@ -51,7 +55,9 @@ export default function SignSearch({
           ))}
         </select>
 
+        <label htmlFor="difficulty-filter" className="sr-only">Filter by difficulty</label>
         <select
+          id="difficulty-filter"
           value={difficulty}
           onChange={(e) => onDifficultyChange(Number(e.target.value))}
           className="px-3 py-1.5 rounded border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm"
@@ -72,7 +78,7 @@ export default function SignSearch({
           Has video
         </label>
 
-        <span className="text-sm text-gray-500 ml-auto">
+        <span className="text-sm text-gray-500 ml-auto" aria-live="polite">
           {resultCount} sign{resultCount !== 1 ? "s" : ""}
         </span>
       </div>

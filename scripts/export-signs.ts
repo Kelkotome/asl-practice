@@ -381,11 +381,14 @@ function getLexMetadata(
 
 // --- Extract core word from published.json keyword ---
 function extractCoreWord(keyword: string): string {
-  // Published keys are like "sign language thank you" → core word is "thank you"
-  // Or just "hello" → "hello"
   return keyword
     .replace(/^sign language\s+/i, "")
-    .replace(/\s+in sign language$/i, "")
+    .replace(/\s+in\s+(american\s+)?sign language$/i, "")
+    .replace(/\s+sign language$/i, "")
+    .replace(/^how (to|do you) say\s+/i, "")
+    .replace(/^how (to|do you) sign\s+/i, "")
+    .replace(/^what is\s+/i, "")
+    .replace(/^for\s+/i, "")
     .trim();
 }
 
@@ -499,8 +502,21 @@ function main() {
     );
   }
 
+  // Dedup by slug — keep the first occurrence (entries with blogUrl are added first)
+  const seen = new Map<string, number>();
+  const deduped = catalog.filter((entry, idx) => {
+    const slug = entry.slug as string;
+    if (seen.has(slug)) return false;
+    seen.set(slug, idx);
+    return true;
+  });
+  const dupCount = catalog.length - deduped.length;
+  if (dupCount > 0) {
+    console.log(`  Deduped ${dupCount} duplicate slug(s)`);
+  }
+
   // Sort catalog by frequency (most common first), nulls last
-  catalog.sort((a, b) => {
+  deduped.sort((a, b) => {
     const fa = (a.frequency as number) ?? -1;
     const fb = (b.frequency as number) ?? -1;
     return fb - fa;
@@ -508,13 +524,13 @@ function main() {
 
   fs.writeFileSync(
     path.join(OUTPUT_DIR, "signs.json"),
-    JSON.stringify(catalog, null, 2)
+    JSON.stringify(deduped, null, 2)
   );
 
   console.log(`\nExport complete:`);
-  console.log(`  ${catalog.length} signs in catalog`);
-  console.log(`  ${lexMatches} with ASL-LEX data (${((lexMatches / catalog.length) * 100).toFixed(1)}%)`);
-  console.log(`  ${videoMatches} with video (${((videoMatches / catalog.length) * 100).toFixed(1)}%)`);
+  console.log(`  ${deduped.length} signs in catalog`);
+  console.log(`  ${lexMatches} with ASL-LEX data (${((lexMatches / deduped.length) * 100).toFixed(1)}%)`);
+  console.log(`  ${videoMatches} with video (${((videoMatches / deduped.length) * 100).toFixed(1)}%)`);
   console.log(`  Output: ${OUTPUT_DIR}/signs.json + ${DETAILS_DIR}/`);
 }
 

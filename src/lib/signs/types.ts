@@ -11,6 +11,8 @@ export interface SignCatalogEntry {
   frequency: number | null;
   frequencyLabel: string | null;
   hasLexData: boolean;
+  handshape?: string | null;
+  majorLocation?: string | null;
 }
 
 /** Full sign detail (loaded server-side for RAG context) */

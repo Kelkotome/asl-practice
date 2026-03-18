@@ -9,7 +9,7 @@
   "signType": "One-Handed",
   "frequency": 6.5,
   "frequencyLabel": "Very Common",
-  "hasLexData": false,
+  "hasLexData": true,
   "handshape": "W",
   "selectedFingers": null,
   "flexion": null,

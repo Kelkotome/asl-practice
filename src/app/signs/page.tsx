@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   title: "Browse ASL Signs — ASL Practice",
   description:
     "Search and filter 2,500+ ASL signs by topic, difficulty, and more. Practice with AI coaching.",
+  openGraph: {
+    url: "https://practice.deafened.org/signs",
+  },
 };
 
 async function getCatalog(): Promise<SignCatalogEntry[]> {

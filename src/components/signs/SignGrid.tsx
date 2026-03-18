@@ -5,6 +5,7 @@ import type { SignCatalogEntry } from "@/lib/signs/types";
 import { searchSigns, filterSigns, getSemanticFields } from "@/lib/signs/catalog";
 import SignCard from "./SignCard";
 import SignSearch from "./SignSearch";
+import ContinuePracticing from "@/components/progress/ContinuePracticing";
 
 const PAGE_SIZE = 48;
 
@@ -54,6 +55,8 @@ export default function SignGrid({ catalog }: { catalog: SignCatalogEntry[] }) {
 
   return (
     <div className="space-y-6">
+      <ContinuePracticing catalog={catalog} />
+
       <SignSearch
         query={query}
         onQueryChange={(q) => { setQuery(q); setPage(0); }}
@@ -74,10 +77,11 @@ export default function SignGrid({ catalog }: { catalog: SignCatalogEntry[] }) {
       </div>
 
       {totalPages > 1 && (
-        <div className="flex justify-center gap-2 pt-4">
+        <nav aria-label="Pagination" role="navigation" className="flex justify-center gap-2 pt-4">
           <button
             onClick={() => setPage(Math.max(0, currentPage - 1))}
             disabled={currentPage === 0}
+            aria-label="Go to previous page"
             className="px-4 py-2 rounded border border-gray-300 dark:border-gray-700 disabled:opacity-40 hover:bg-gray-100 dark:hover:bg-gray-800"
           >
             Previous
@@ -88,11 +92,12 @@ export default function SignGrid({ catalog }: { catalog: SignCatalogEntry[] }) {
           <button
             onClick={() => setPage(Math.min(totalPages - 1, currentPage + 1))}
             disabled={currentPage >= totalPages - 1}
+            aria-label="Go to next page"
             className="px-4 py-2 rounded border border-gray-300 dark:border-gray-700 disabled:opacity-40 hover:bg-gray-100 dark:hover:bg-gray-800"
           >
             Next
           </button>
-        </div>
+        </nav>
       )}
     </div>
   );
