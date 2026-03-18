@@ -61,7 +61,7 @@ export default function CaptureButton({
           <button
             onClick={onStop}
             aria-label={`Stop recording, ${Math.ceil(maxDuration - elapsed)} seconds remaining`}
-            className="px-6 py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors"
+            className="px-6 py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 active:bg-red-800 transition-colors text-sm sm:text-base min-h-[44px]"
           >
             Stop ({Math.ceil(maxDuration - elapsed)}s)
           </button>
@@ -70,7 +70,7 @@ export default function CaptureButton({
         <button
           onClick={onStart}
           aria-label={`Start recording sign, up to ${maxDuration} seconds`}
-          className="px-6 py-3 bg-brand-600 text-white rounded-lg font-medium hover:bg-brand-700 transition-colors"
+          className="px-6 py-3 bg-brand-600 text-white rounded-lg font-medium hover:bg-brand-700 active:bg-brand-800 transition-colors text-sm sm:text-base min-h-[44px]"
         >
           Record Sign (up to {maxDuration}s)
         </button>

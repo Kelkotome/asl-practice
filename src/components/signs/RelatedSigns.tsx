@@ -15,7 +15,7 @@ export default function RelatedSigns({ signs }: RelatedSignsProps) {
       <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
         Related Signs
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
         {signs.map((sign) => (
           <SignCard key={sign.slug} sign={sign} />
         ))}

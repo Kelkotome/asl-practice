@@ -41,26 +41,26 @@ export default function RootLayout({
             <nav aria-label="Main navigation" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
               <Link
                 href="/"
-                className="text-xl font-bold text-brand-700 dark:text-brand-200"
+                className="text-xl font-bold text-brand-700 dark:text-brand-200 shrink-0"
               >
                 ASL Practice
               </Link>
-              <div className="flex items-center gap-6">
+              <div className="flex items-center gap-3 sm:gap-6">
                 <Link
                   href="/signs"
-                  className="text-sm text-gray-600 dark:text-gray-400 hover:text-brand-600"
+                  className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 hover:text-brand-600"
                 >
-                  Browse Signs
+                  Signs
                 </Link>
                 <Link
                   href="/paths"
-                  className="text-sm text-gray-600 dark:text-gray-400 hover:text-brand-600"
+                  className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 hover:text-brand-600"
                 >
-                  Learning Paths
+                  Paths
                 </Link>
                 <a
                   href="https://deafened.org"
-                  className="text-sm text-gray-600 dark:text-gray-400 hover:text-brand-600"
+                  className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 hover:text-brand-600 hidden sm:inline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >

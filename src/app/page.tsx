@@ -39,20 +39,20 @@ export default function LandingPage() {
   const signCount = catalog.length;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-16 sm:py-24">
+    <div className="max-w-4xl mx-auto px-4 py-10 sm:py-24">
       <div className="text-center">
-        <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-6">
+        <h1 className="text-3xl sm:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-4 sm:mb-6">
           Practice ASL with{" "}
           <span className="text-brand-600">AI Coaching</span>
         </h1>
-        <p className="text-xl text-gray-600 dark:text-gray-400 mb-8 max-w-2xl mx-auto">
+        <p className="text-base sm:text-xl text-gray-600 dark:text-gray-400 mb-6 sm:mb-8 max-w-2xl mx-auto">
           Pick a sign, watch the reference video, try it on camera, and get
           instant feedback on your handshape, movement, and location — powered
           by ASL-LEX linguistic data.
         </p>
         <Link
           href="/signs"
-          className="inline-flex items-center px-8 py-4 bg-brand-600 text-white rounded-lg text-lg font-semibold hover:bg-brand-700 transition-colors"
+          className="inline-flex items-center px-6 sm:px-8 py-3 sm:py-4 bg-brand-600 text-white rounded-lg text-base sm:text-lg font-semibold hover:bg-brand-700 transition-colors"
         >
           Browse {signCount.toLocaleString()}+ Signs →
         </Link>
@@ -62,46 +62,44 @@ export default function LandingPage() {
       </div>
 
       {/* Stat Cards */}
-      <div className="mt-16 grid sm:grid-cols-3 gap-6">
-        <div className="text-center p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-          <div className="text-3xl font-bold text-brand-600">
+      <div className="mt-10 sm:mt-16 grid grid-cols-3 gap-3 sm:gap-6">
+        <div className="text-center p-3 sm:p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+          <div className="text-xl sm:text-3xl font-bold text-brand-600">
             {signCount.toLocaleString()}+
           </div>
-          <div className="mt-1 text-gray-600 dark:text-gray-400">Signs</div>
+          <div className="mt-1 text-xs sm:text-base text-gray-600 dark:text-gray-400">Signs</div>
         </div>
-        <div className="text-center p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-          <div className="text-3xl font-bold text-brand-600">ASL-LEX</div>
-          <div className="mt-1 text-gray-600 dark:text-gray-400">Powered</div>
+        <div className="text-center p-3 sm:p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+          <div className="text-xl sm:text-3xl font-bold text-brand-600">ASL-LEX</div>
+          <div className="mt-1 text-xs sm:text-base text-gray-600 dark:text-gray-400">Powered</div>
         </div>
-        <div className="text-center p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-          <div className="text-3xl font-bold text-brand-600">100%</div>
-          <div className="mt-1 text-gray-600 dark:text-gray-400">Private</div>
+        <div className="text-center p-3 sm:p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+          <div className="text-xl sm:text-3xl font-bold text-brand-600">100%</div>
+          <div className="mt-1 text-xs sm:text-base text-gray-600 dark:text-gray-400">Private</div>
         </div>
       </div>
 
       {/* 3-Step Explanation */}
-      <div className="mt-20 grid sm:grid-cols-3 gap-8">
+      <div className="mt-12 sm:mt-20 grid grid-cols-3 gap-4 sm:gap-8">
         <div className="text-center">
-          <div className="text-3xl mb-3">1.</div>
-          <h3 className="font-semibold text-lg mb-2">Watch</h3>
-          <p className="text-gray-600 dark:text-gray-400">
-            Select a sign and watch the reference video to see the correct form.
+          <div className="text-2xl sm:text-3xl mb-2 sm:mb-3">1.</div>
+          <h3 className="font-semibold text-sm sm:text-lg mb-1 sm:mb-2">Watch</h3>
+          <p className="text-xs sm:text-base text-gray-600 dark:text-gray-400">
+            Select a sign and watch the reference video.
           </p>
         </div>
         <div className="text-center">
-          <div className="text-3xl mb-3">2.</div>
-          <h3 className="font-semibold text-lg mb-2">Practice</h3>
-          <p className="text-gray-600 dark:text-gray-400">
-            Turn on your camera and sign it. MediaPipe tracks your hand
-            landmarks in real time.
+          <div className="text-2xl sm:text-3xl mb-2 sm:mb-3">2.</div>
+          <h3 className="font-semibold text-sm sm:text-lg mb-1 sm:mb-2">Practice</h3>
+          <p className="text-xs sm:text-base text-gray-600 dark:text-gray-400">
+            Turn on your camera and sign it.
           </p>
         </div>
         <div className="text-center">
-          <div className="text-3xl mb-3">3.</div>
-          <h3 className="font-semibold text-lg mb-2">Improve</h3>
-          <p className="text-gray-600 dark:text-gray-400">
-            Get AI coaching that compares your attempt against ASL-LEX
-            phonological ground truth.
+          <div className="text-2xl sm:text-3xl mb-2 sm:mb-3">3.</div>
+          <h3 className="font-semibold text-sm sm:text-lg mb-1 sm:mb-2">Improve</h3>
+          <p className="text-xs sm:text-base text-gray-600 dark:text-gray-400">
+            Get AI coaching on your form.
           </p>
         </div>
       </div>

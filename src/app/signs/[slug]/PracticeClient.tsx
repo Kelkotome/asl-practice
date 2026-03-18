@@ -82,74 +82,79 @@ export default function PracticeClient({ sign, relatedSigns = [] }: PracticeClie
   }, [sign.slug, recordedData]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8">
       {showOnboarding && <OnboardingModal onComplete={completeOnboarding} />}
 
       {/* Header */}
-      <div className="mb-6 flex items-start justify-between">
-        <div>
-          <div className="flex items-center gap-3 mb-1">
-            <Link
-              href="/signs"
-              className="text-sm text-gray-500 hover:text-brand-600"
-            >
-              &larr; All Signs
-            </Link>
-          </div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-              {sign.name}
-            </h1>
-            <StreakBadge />
-          </div>
-          <div className="flex items-center gap-3 mt-2">
-            <DifficultyBadge difficulty={sign.difficulty} />
-            {sign.signType && (
-              <span className="text-sm text-gray-500">{sign.signType}</span>
-            )}
-            {sign.lexicalClass && (
-              <span className="text-sm text-gray-500">{sign.lexicalClass}</span>
-            )}
-            {sign.semanticField && (
-              <span className="text-sm text-gray-500">{sign.semanticField}</span>
-            )}
-          </div>
-        </div>
-        {sign.blogUrl && (
-          <a
-            href={sign.blogUrl}
-            className="text-sm text-brand-600 hover:underline"
-            target="_blank"
-            rel="noopener noreferrer"
+      <div className="mb-4 sm:mb-6">
+        <div className="flex items-center gap-3 mb-1">
+          <Link
+            href="/signs"
+            className="text-sm text-gray-500 hover:text-brand-600"
           >
-            View tutorial &rarr;
-          </a>
-        )}
+            &larr; All Signs
+          </Link>
+        </div>
+        <div className="flex items-start justify-between">
+          <div>
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">
+                {sign.name}
+              </h1>
+              <StreakBadge />
+            </div>
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2">
+              <DifficultyBadge difficulty={sign.difficulty} />
+              {sign.signType && (
+                <span className="text-xs sm:text-sm text-gray-500">{sign.signType}</span>
+              )}
+              {sign.lexicalClass && (
+                <span className="text-xs sm:text-sm text-gray-500">{sign.lexicalClass}</span>
+              )}
+              {sign.semanticField && (
+                <span className="text-xs sm:text-sm text-gray-500">{sign.semanticField}</span>
+              )}
+            </div>
+          </div>
+          {sign.blogUrl && (
+            <a
+              href={sign.blogUrl}
+              className="text-xs sm:text-sm text-brand-600 hover:underline shrink-0 ml-2"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Tutorial &rarr;
+            </a>
+          )}
+        </div>
       </div>
 
       {/* Step guide */}
-      <div className="mb-6 flex items-center gap-4 text-sm">
-        <div className={`flex items-center gap-2 ${!recordedData && !feedback ? "text-brand-600 font-semibold" : "text-gray-400"}`}>
-          <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${!recordedData && !feedback ? "bg-brand-600 text-white" : "bg-gray-200 dark:bg-gray-700 text-gray-500"}`}>1</span>
-          Watch the video
+      <div className="mb-4 sm:mb-6 flex items-center justify-center sm:justify-start gap-2 sm:gap-4 text-sm">
+        <div className={`flex items-center gap-1.5 sm:gap-2 ${!recordedData && !feedback ? "text-brand-600 font-semibold" : "text-gray-400"}`}>
+          <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${!recordedData && !feedback ? "bg-brand-600 text-white" : "bg-gray-200 dark:bg-gray-700 text-gray-500"}`}>1</span>
+          <span className="hidden sm:inline">Watch the video</span>
+          <span className="sm:hidden">Watch</span>
         </div>
-        <div className="h-px w-6 bg-gray-300 dark:bg-gray-700" />
-        <div className={`flex items-center gap-2 ${recordedData && !feedback ? "text-brand-600 font-semibold" : "text-gray-400"}`}>
-          <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${recordedData && !feedback ? "bg-brand-600 text-white" : "bg-gray-200 dark:bg-gray-700 text-gray-500"}`}>2</span>
-          Record your sign
+        <div className="h-px w-4 sm:w-6 bg-gray-300 dark:bg-gray-700" />
+        <div className={`flex items-center gap-1.5 sm:gap-2 ${recordedData && !feedback ? "text-brand-600 font-semibold" : "text-gray-400"}`}>
+          <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${recordedData && !feedback ? "bg-brand-600 text-white" : "bg-gray-200 dark:bg-gray-700 text-gray-500"}`}>2</span>
+          <span className="hidden sm:inline">Record your sign</span>
+          <span className="sm:hidden">Record</span>
         </div>
-        <div className="h-px w-6 bg-gray-300 dark:bg-gray-700" />
-        <div className={`flex items-center gap-2 ${feedback ? "text-brand-600 font-semibold" : "text-gray-400"}`}>
-          <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${feedback ? "bg-brand-600 text-white" : "bg-gray-200 dark:bg-gray-700 text-gray-500"}`}>3</span>
-          Get feedback
+        <div className="h-px w-4 sm:w-6 bg-gray-300 dark:bg-gray-700" />
+        <div className={`flex items-center gap-1.5 sm:gap-2 ${feedback ? "text-brand-600 font-semibold" : "text-gray-400"}`}>
+          <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${feedback ? "bg-brand-600 text-white" : "bg-gray-200 dark:bg-gray-700 text-gray-500"}`}>3</span>
+          <span className="hidden sm:inline">Get feedback</span>
+          <span className="sm:hidden">Feedback</span>
         </div>
       </div>
 
-      {/* Three-panel layout */}
-      <div className="grid lg:grid-cols-3 gap-6">
+      {/* Main layout: video + camera side-by-side on tablet, 3-col on desktop */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Left: Reference video */}
-        <div className="space-y-4">
-          <h2 className="font-semibold text-lg">Reference Video</h2>
+        <div className="space-y-3 sm:space-y-4">
+          <h2 className="font-semibold text-base sm:text-lg">Reference Video</h2>
           {sign.videoId ? (
             <ReferencePlayer videoId={sign.videoId} signName={sign.name} />
           ) : (
@@ -158,40 +163,45 @@ export default function PracticeClient({ sign, relatedSigns = [] }: PracticeClie
             </div>
           )}
 
-          {/* Sign details */}
+          {/* Sign details — collapsible on mobile */}
           {sign.hasLexData && (
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 text-sm space-y-1">
-              <h3 className="font-medium mb-2">ASL-LEX Data</h3>
-              {sign.handshape && <p><strong>Handshape:</strong> {sign.handshape}</p>}
-              {sign.movement && <p><strong>Movement:</strong> {sign.movement}</p>}
-              {sign.majorLocation && <p><strong>Location:</strong> {sign.majorLocation}</p>}
-              {sign.contact && <p><strong>Contact:</strong> {sign.contact}</p>}
-              {sign.iconicityLabel && (
-                <p><strong>Iconicity:</strong> {sign.iconicityLabel} ({sign.iconicity}/7)</p>
-              )}
-              {sign.frequencyLabel && (
-                <p><strong>Frequency:</strong> {sign.frequencyLabel} ({sign.frequency}/7)</p>
-              )}
-            </div>
+            <details className="bg-gray-50 dark:bg-gray-800 rounded-lg text-sm">
+              <summary className="p-3 sm:p-4 font-medium cursor-pointer select-none list-none flex items-center justify-between [&::-webkit-details-marker]:hidden">
+                ASL-LEX Data
+                <span className="text-gray-400 text-xs ml-2">tap to expand</span>
+              </summary>
+              <div className="px-3 pb-3 sm:px-4 sm:pb-4 space-y-1">
+                {sign.handshape && <p><strong>Handshape:</strong> {sign.handshape}</p>}
+                {sign.movement && <p><strong>Movement:</strong> {sign.movement}</p>}
+                {sign.majorLocation && <p><strong>Location:</strong> {sign.majorLocation}</p>}
+                {sign.contact && <p><strong>Contact:</strong> {sign.contact}</p>}
+                {sign.iconicityLabel && (
+                  <p><strong>Iconicity:</strong> {sign.iconicityLabel} ({sign.iconicity}/7)</p>
+                )}
+                {sign.frequencyLabel && (
+                  <p><strong>Frequency:</strong> {sign.frequencyLabel} ({sign.frequency}/7)</p>
+                )}
+              </div>
+            </details>
           )}
         </div>
 
         {/* Center: Camera */}
-        <div className="space-y-4">
-          <h2 className="font-semibold text-lg">Your Camera</h2>
+        <div className="space-y-3 sm:space-y-4">
+          <h2 className="font-semibold text-base sm:text-lg">Your Camera</h2>
           <CameraFeed onRecordingComplete={handleRecordingComplete} />
         </div>
 
-        {/* Right: Feedback */}
-        <div className="space-y-4">
-          <h2 className="font-semibold text-lg">AI Coaching</h2>
+        {/* Right: Feedback — full width on mobile/tablet, third column on desktop */}
+        <div className="space-y-3 sm:space-y-4 sm:col-span-2 lg:col-span-1">
+          <h2 className="font-semibold text-base sm:text-lg">AI Coaching</h2>
           <div
-            className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-6"
+            className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-4 sm:p-6"
             aria-live="polite"
             aria-busy={isLoading}
           >
             {!recordedData && !feedback && (
-              <p className="text-gray-500 dark:text-gray-400">
+              <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base">
                 Record yourself signing &quot;{sign.name}&quot; to get
                 personalized feedback.
               </p>
@@ -199,7 +209,7 @@ export default function PracticeClient({ sign, relatedSigns = [] }: PracticeClie
 
             {recordedData && !feedback && !isLoading && (
               <div className="space-y-3">
-                <p className="text-gray-600 dark:text-gray-400">
+                <p className="text-gray-600 dark:text-gray-400 text-sm">
                   Captured {recordedData.frames.length} frames over{" "}
                   {recordedData.duration.toFixed(1)}s.
                 </p>
