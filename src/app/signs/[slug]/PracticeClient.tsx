@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useState, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import type { SignDetail, SignCatalogEntry, LandmarkFrame } from "@/lib/signs/types";
 import CameraFeed from "@/components/camera/CameraFeed";
 import ReferencePlayer from "@/components/video/ReferencePlayer";
@@ -12,6 +13,7 @@ import { useRecordPractice } from "@/lib/progress/hooks";
 import { useOnboarding } from "@/lib/onboarding/hooks";
 import OnboardingModal from "@/components/onboarding/OnboardingModal";
 import StreakBadge from "@/components/progress/StreakBadge";
+import { LEARNING_PATHS } from "@/lib/paths/data";
 
 interface PracticeClientProps {
   sign: SignDetail;
@@ -28,6 +30,27 @@ export default function PracticeClient({ sign, relatedSigns = [] }: PracticeClie
   } | null>(null);
   const { record: recordProgress } = useRecordPractice(sign.slug);
   const { showOnboarding, complete: completeOnboarding } = useOnboarding();
+  const searchParams = useSearchParams();
+
+  // Learning path context from query param
+  const pathNav = useMemo(() => {
+    const pathSlug = searchParams.get("path");
+    if (!pathSlug) return null;
+
+    const path = LEARNING_PATHS.find((p) => p.slug === pathSlug);
+    if (!path) return null;
+
+    const index = path.signSlugs.indexOf(sign.slug);
+    if (index === -1) return null;
+
+    return {
+      path,
+      index,
+      total: path.signSlugs.length,
+      prev: index > 0 ? path.signSlugs[index - 1] : null,
+      next: index < path.signSlugs.length - 1 ? path.signSlugs[index + 1] : null,
+    };
+  }, [searchParams, sign.slug]);
 
   const handleRecordingComplete = useCallback(
     (frames: LandmarkFrame[], duration: number) => {
@@ -87,13 +110,23 @@ export default function PracticeClient({ sign, relatedSigns = [] }: PracticeClie
 
       {/* Header */}
       <div className="mb-4 sm:mb-6">
-        <div className="flex items-center gap-3 mb-1">
-          <Link
-            href="/signs"
-            className="text-sm text-gray-500 hover:text-brand-600"
-          >
-            &larr; All Signs
-          </Link>
+        <div className="flex items-center gap-1.5 mb-1 text-sm text-gray-500">
+          {pathNav ? (
+            <>
+              <Link href="/paths" className="hover:text-brand-600">Paths</Link>
+              <span>/</span>
+              <Link href={`/paths/${pathNav.path.slug}`} className="hover:text-brand-600">
+                {pathNav.path.name}
+              </Link>
+              <span className="text-gray-400 ml-1">
+                ({pathNav.index + 1}/{pathNav.total})
+              </span>
+            </>
+          ) : (
+            <Link href="/signs" className="hover:text-brand-600">
+              &larr; All Signs
+            </Link>
+          )}
         </div>
         <div className="flex items-start justify-between">
           <div>
@@ -255,6 +288,43 @@ export default function PracticeClient({ sign, relatedSigns = [] }: PracticeClie
           </div>
         </div>
       </div>
+
+      {/* Path prev/next navigation */}
+      {pathNav && (
+        <nav className="mt-8 flex items-center justify-between" aria-label="Learning path navigation">
+          {pathNav.prev ? (
+            <Link
+              href={`/signs/${pathNav.prev}?path=${pathNav.path.slug}`}
+              className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-brand-400 hover:text-brand-600 transition-colors min-h-[44px]"
+            >
+              &larr; Previous
+            </Link>
+          ) : (
+            <div />
+          )}
+          <Link
+            href={`/paths/${pathNav.path.slug}`}
+            className="text-xs sm:text-sm text-gray-500 hover:text-brand-600"
+          >
+            Back to {pathNav.path.name}
+          </Link>
+          {pathNav.next ? (
+            <Link
+              href={`/signs/${pathNav.next}?path=${pathNav.path.slug}`}
+              className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-brand-600 rounded-lg hover:bg-brand-700 transition-colors min-h-[44px]"
+            >
+              Next &rarr;
+            </Link>
+          ) : (
+            <Link
+              href={`/paths/${pathNav.path.slug}`}
+              className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors min-h-[44px]"
+            >
+              Complete!
+            </Link>
+          )}
+        </nav>
+      )}
 
       <RelatedSigns signs={relatedSigns} />
     </div>

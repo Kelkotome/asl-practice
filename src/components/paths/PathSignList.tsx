@@ -5,7 +5,7 @@ import type { SignCatalogEntry } from "@/lib/signs/types";
 import DifficultyBadge from "@/components/signs/DifficultyBadge";
 import { usePracticeProgress } from "@/lib/progress/hooks";
 
-export default function PathSignList({ signs }: { signs: SignCatalogEntry[] }) {
+export default function PathSignList({ signs, pathSlug }: { signs: SignCatalogEntry[]; pathSlug: string }) {
   const progress = usePracticeProgress();
 
   return (
@@ -15,7 +15,7 @@ export default function PathSignList({ signs }: { signs: SignCatalogEntry[] }) {
         return (
           <li key={sign.slug}>
             <Link
-              href={`/signs/${sign.slug}`}
+              href={`/signs/${sign.slug}?path=${pathSlug}`}
               className="flex items-center gap-4 py-3 px-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded transition-colors"
             >
               <span className="text-sm font-medium text-gray-400 dark:text-gray-500 w-6 text-right">

@@ -76,7 +76,7 @@ export default async function PathDetailPage({ params }: PageProps) {
         <ProgressBar signSlugs={pathData.signSlugs} />
       </div>
 
-      <PathSignList signs={signs} />
+      <PathSignList signs={signs} pathSlug={pathData.slug} />
     </div>
   );
 }
