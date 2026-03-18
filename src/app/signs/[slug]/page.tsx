@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import type { SignDetail, SignCatalogEntry } from "@/lib/signs/types";
 import { getRelatedSigns } from "@/lib/signs/related";
@@ -100,7 +101,9 @@ export default async function PracticePage({ params }: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(howToSchema) }}
       />
-      <PracticeClient sign={sign} relatedSigns={relatedSigns} />
+      <Suspense>
+        <PracticeClient sign={sign} relatedSigns={relatedSigns} />
+      </Suspense>
     </>
   );
 }
