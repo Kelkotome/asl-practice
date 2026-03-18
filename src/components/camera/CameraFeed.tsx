@@ -37,7 +37,7 @@ export default function CameraFeed({ onRecordingComplete }: CameraFeedProps) {
         if (!cancelled) setHandLandmarker(detector);
       } catch (err) {
         console.error("MediaPipe init failed:", err);
-        if (!cancelled) setError("Failed to load hand detection model. Please try a different browser.");
+        if (!cancelled) setError("mediapipe");
       }
     }
 
@@ -47,6 +47,12 @@ export default function CameraFeed({ onRecordingComplete }: CameraFeedProps) {
 
   // Start camera
   const startCamera = useCallback(async () => {
+    // Check if camera API is available
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      setError("no-camera");
+      return;
+    }
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } },
@@ -60,8 +66,15 @@ export default function CameraFeed({ onRecordingComplete }: CameraFeedProps) {
         });
         setIsStreaming(true);
       }
-    } catch {
-      setError("Camera access denied. Please allow camera permissions.");
+    } catch (err) {
+      const name = err instanceof DOMException ? err.name : "";
+      if (name === "NotFoundError" || name === "DevicesNotFoundError") {
+        setError("no-camera");
+      } else if (name === "NotAllowedError" || name === "PermissionDeniedError") {
+        setError("denied");
+      } else {
+        setError("generic");
+      }
     }
   }, []);
 
@@ -123,10 +136,49 @@ export default function CameraFeed({ onRecordingComplete }: CameraFeedProps) {
     onRecordingComplete(recordedFrames.current, duration);
   }, [onRecordingComplete]);
 
-  if (error) {
+  if (error === "mediapipe") {
+    return (
+      <div className="bg-amber-50 dark:bg-amber-950 rounded-lg p-6 text-center">
+        <p className="font-medium text-amber-800 dark:text-amber-200 mb-2">Hand detection unavailable</p>
+        <p className="text-sm text-amber-700 dark:text-amber-300">
+          Could not load the hand tracking model. Try a different browser (Chrome or Edge work best).
+        </p>
+      </div>
+    );
+  }
+
+  if (error === "no-camera") {
+    return (
+      <div className="bg-blue-50 dark:bg-blue-950 rounded-lg p-6 text-center">
+        <p className="font-medium text-blue-800 dark:text-blue-200 mb-2">No camera detected</p>
+        <p className="text-sm text-blue-700 dark:text-blue-300 mb-3">
+          You can still watch the reference video and learn the sign. To practice with AI coaching, connect a webcam or try on a device with a camera.
+        </p>
+        <p className="text-xs text-blue-600 dark:text-blue-400">
+          Tip: This works great on phones — just open this page on your mobile device.
+        </p>
+      </div>
+    );
+  }
+
+  if (error === "denied") {
+    return (
+      <div className="bg-amber-50 dark:bg-amber-950 rounded-lg p-6 text-center">
+        <p className="font-medium text-amber-800 dark:text-amber-200 mb-2">Camera access blocked</p>
+        <p className="text-sm text-amber-700 dark:text-amber-300">
+          Please allow camera permissions in your browser settings and reload the page. You can still watch the reference video in the meantime.
+        </p>
+      </div>
+    );
+  }
+
+  if (error === "generic") {
     return (
       <div className="bg-red-50 dark:bg-red-950 rounded-lg p-6 text-center">
-        <p className="text-red-700 dark:text-red-300">{error}</p>
+        <p className="font-medium text-red-800 dark:text-red-200 mb-2">Camera error</p>
+        <p className="text-sm text-red-700 dark:text-red-300">
+          Something went wrong starting the camera. Please reload and try again.
+        </p>
       </div>
     );
   }
@@ -134,15 +186,18 @@ export default function CameraFeed({ onRecordingComplete }: CameraFeedProps) {
   return (
     <div className="space-y-4">
       {!isStreaming && (
-        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg aspect-video flex items-center justify-center">
+        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg aspect-video flex flex-col items-center justify-center gap-3 p-4">
           <button
             onClick={startCamera}
             disabled={!handLandmarker}
             aria-label={handLandmarker ? "Start camera for sign practice" : "Loading hand detection model"}
-            className="px-6 py-3 bg-brand-600 text-white rounded-lg font-medium hover:bg-brand-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-6 py-3 bg-brand-600 text-white rounded-lg font-medium hover:bg-brand-700 active:bg-brand-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[44px]"
           >
             {handLandmarker ? "Start Camera" : "Loading hand detection..."}
           </button>
+          <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+            Your camera stays private — hand tracking runs in your browser
+          </p>
         </div>
       )}
       <div className={`relative rounded-lg overflow-hidden bg-black ${!isStreaming ? "hidden" : ""}`}>
