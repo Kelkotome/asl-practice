@@ -13,6 +13,8 @@ import { useRecordPractice } from "@/lib/progress/hooks";
 import { useOnboarding } from "@/lib/onboarding/hooks";
 import OnboardingModal from "@/components/onboarding/OnboardingModal";
 import StreakBadge from "@/components/progress/StreakBadge";
+import FavoriteButton from "@/components/signs/FavoriteButton";
+import ShareButton from "@/components/signs/ShareButton";
 import { LEARNING_PATHS } from "@/lib/paths/data";
 
 interface PracticeClientProps {
@@ -131,10 +133,16 @@ export default function PracticeClient({ sign, relatedSigns = [] }: PracticeClie
         </div>
         <div className="flex items-start justify-between">
           <div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">
                 {sign.name}
               </h1>
+              <FavoriteButton slug={sign.slug} />
+              <ShareButton
+                signName={sign.name}
+                practiceUrl={`https://practice.deafened.org/signs/${sign.slug}`}
+                blogUrl={sign.blogUrl}
+              />
               <StreakBadge />
             </div>
             <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2">

@@ -5,6 +5,7 @@ import type { SignCatalogEntry } from "@/lib/signs/types";
 import { searchSigns, filterSigns, getSemanticFields } from "@/lib/signs/catalog";
 import SignCard from "./SignCard";
 import SignSearch from "./SignSearch";
+import FavoritesList from "./FavoritesList";
 import ContinuePracticing from "@/components/progress/ContinuePracticing";
 
 const PAGE_SIZE = 48;
@@ -53,9 +54,33 @@ export default function SignGrid({ catalog }: { catalog: SignCatalogEntry[] }) {
     (currentPage + 1) * PAGE_SIZE
   );
 
+  // Compute available first letters for jump nav (only when not searching/filtering)
+  const jumpLetters = useMemo(() => {
+    if (query || semanticField || difficulty || hasVideo) return [];
+    const letters = new Set<string>();
+    for (const sign of results) {
+      const first = sign.name[0]?.toUpperCase();
+      if (first && /[A-Z]/.test(first)) letters.add(first);
+    }
+    return "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map((l) => ({
+      letter: l,
+      available: letters.has(l),
+    }));
+  }, [results, query, semanticField, difficulty, hasVideo]);
+
+  function jumpToLetter(letter: string) {
+    const index = results.findIndex(
+      (s) => s.name[0]?.toUpperCase() === letter
+    );
+    if (index >= 0) {
+      setPage(Math.floor(index / PAGE_SIZE));
+    }
+  }
+
   return (
     <div className="space-y-6">
       <ContinuePracticing catalog={catalog} />
+      <FavoritesList catalog={catalog} />
 
       <SignSearch
         query={query}
@@ -69,6 +94,27 @@ export default function SignGrid({ catalog }: { catalog: SignCatalogEntry[] }) {
         semanticFields={semanticFields}
         resultCount={results.length}
       />
+
+      {/* Alphabetical jump nav */}
+      {jumpLetters.length > 0 && (
+        <nav aria-label="Jump to letter" className="flex flex-wrap gap-1 justify-center">
+          {jumpLetters.map(({ letter, available }) => (
+            <button
+              key={letter}
+              onClick={() => available && jumpToLetter(letter)}
+              disabled={!available}
+              aria-label={`Jump to signs starting with ${letter}`}
+              className={`w-8 h-8 text-xs font-medium rounded transition-colors ${
+                available
+                  ? "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 hover:border-brand-500 hover:text-brand-600 text-gray-700 dark:text-gray-300"
+                  : "text-gray-300 dark:text-gray-700 cursor-default"
+              }`}
+            >
+              {letter}
+            </button>
+          ))}
+        </nav>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {pageResults.map((sign) => (

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import type { SignCatalogEntry } from "@/lib/signs/types";
 import DifficultyBadge from "./DifficultyBadge";
+import FavoriteButton from "./FavoriteButton";
 import PracticeBadge from "@/components/progress/PracticeBadge";
 import { usePracticeProgress } from "@/lib/progress/hooks";
 
@@ -20,7 +21,8 @@ export default function SignCard({ sign }: { sign: SignCatalogEntry }) {
         <h3 className="font-semibold text-gray-900 dark:text-gray-100">
           {sign.name}
         </h3>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
+          <FavoriteButton slug={sign.slug} size="sm" />
           <PracticeBadge count={practiceCount} />
           <DifficultyBadge difficulty={sign.difficulty} />
         </div>
