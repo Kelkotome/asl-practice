@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useTranslations } from "next-intl";
 import type { SignCatalogEntry } from "@/lib/signs/types";
 import { searchSigns, filterSigns, getSemanticFields } from "@/lib/signs/catalog";
 import SignCard from "./SignCard";
@@ -11,6 +12,7 @@ import ContinuePracticing from "@/components/progress/ContinuePracticing";
 const PAGE_SIZE = 48;
 
 export default function SignGrid({ catalog }: { catalog: SignCatalogEntry[] }) {
+  const t = useTranslations("search");
   const [query, setQuery] = useState("");
   const [semanticField, setSemanticField] = useState("");
   const [difficulty, setDifficulty] = useState(0);
@@ -25,12 +27,10 @@ export default function SignGrid({ catalog }: { catalog: SignCatalogEntry[] }) {
       const bIsLetter = /^[A-Z]$/.test(b.name);
       const aIsNumber = /^\d+$/.test(a.name);
       const bIsNumber = /^\d+$/.test(b.name);
-      // Alphabet first, then numbers, then everything else
       if (aIsLetter && !bIsLetter) return -1;
       if (!aIsLetter && bIsLetter) return 1;
       if (aIsNumber && !bIsNumber) return -1;
       if (!aIsNumber && bIsNumber) return 1;
-      // Sort numbers numerically
       if (aIsNumber && bIsNumber) return parseInt(a.name) - parseInt(b.name);
       return a.name.localeCompare(b.name);
     });
@@ -46,7 +46,6 @@ export default function SignGrid({ catalog }: { catalog: SignCatalogEntry[] }) {
     return signs;
   }, [catalog, sortedCatalog, query, semanticField, difficulty, hasVideo]);
 
-  // Reset page when filters change
   const totalPages = Math.ceil(results.length / PAGE_SIZE);
   const currentPage = Math.min(page, totalPages - 1);
   const pageResults = results.slice(
@@ -54,7 +53,6 @@ export default function SignGrid({ catalog }: { catalog: SignCatalogEntry[] }) {
     (currentPage + 1) * PAGE_SIZE
   );
 
-  // Compute available first letters for jump nav (only when not searching/filtering)
   const jumpLetters = useMemo(() => {
     if (query || semanticField || difficulty || hasVideo) return [];
     const letters = new Set<string>();
@@ -103,7 +101,7 @@ export default function SignGrid({ catalog }: { catalog: SignCatalogEntry[] }) {
               key={letter}
               onClick={() => available && jumpToLetter(letter)}
               disabled={!available}
-              aria-label={`Jump to signs starting with ${letter}`}
+              aria-label={t("jumpToLetter", { letter })}
               className={`w-8 h-8 text-xs font-medium rounded transition-colors ${
                 available
                   ? "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 hover:border-brand-500 hover:text-brand-600 text-gray-700 dark:text-gray-300"
@@ -117,9 +115,38 @@ export default function SignGrid({ catalog }: { catalog: SignCatalogEntry[] }) {
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {pageResults.map((sign) => (
-          <SignCard key={sign.slug} sign={sign} />
-        ))}
+        {pageResults.map((sign, i) => {
+          const prev = i > 0 ? pageResults[i - 1] : (currentPage > 0 ? results[currentPage * PAGE_SIZE - 1] : null);
+          const isLetter = /^[A-Z]$/.test(sign.name);
+          const isNumber = /^\d+$/.test(sign.name);
+          const prevIsLetter = prev ? /^[A-Z]$/.test(prev.name) : false;
+          const prevIsNumber = prev ? /^\d+$/.test(prev.name) : false;
+
+          const showAlphabetHeader = isLetter && !prevIsLetter && !query;
+          const showNumberHeader = isNumber && !prevIsNumber && !query;
+          const showWordHeader = !isLetter && !isNumber && (prevIsLetter || prevIsNumber || !prev) && !query;
+
+          return (
+            <>
+              {showAlphabetHeader && (
+                <h3 key="header-alphabet" className="col-span-full text-lg font-semibold text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700 pb-2 pt-2">
+                  {t("alphabets")}
+                </h3>
+              )}
+              {showNumberHeader && (
+                <h3 key="header-numbers" className="col-span-full text-lg font-semibold text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700 pb-2 pt-2">
+                  {t("numbers")}
+                </h3>
+              )}
+              {showWordHeader && (
+                <h3 key="header-words" className="col-span-full text-lg font-semibold text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700 pb-2 pt-2">
+                  {t("words")}
+                </h3>
+              )}
+              <SignCard key={sign.slug} sign={sign} />
+            </>
+          );
+        })}
       </div>
 
       {totalPages > 1 && (
@@ -127,21 +154,21 @@ export default function SignGrid({ catalog }: { catalog: SignCatalogEntry[] }) {
           <button
             onClick={() => setPage(Math.max(0, currentPage - 1))}
             disabled={currentPage === 0}
-            aria-label="Go to previous page"
+            aria-label={t("previousPage")}
             className="px-4 py-2 rounded border border-gray-300 dark:border-gray-700 disabled:opacity-40 hover:bg-gray-100 dark:hover:bg-gray-800"
           >
-            Previous
+            {t("previousPage")}
           </button>
           <span className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400">
-            Page {currentPage + 1} of {totalPages}
+            {t("pageOf", { current: currentPage + 1, total: totalPages })}
           </span>
           <button
             onClick={() => setPage(Math.min(totalPages - 1, currentPage + 1))}
             disabled={currentPage >= totalPages - 1}
-            aria-label="Go to next page"
+            aria-label={t("nextPage")}
             className="px-4 py-2 rounded border border-gray-300 dark:border-gray-700 disabled:opacity-40 hover:bg-gray-100 dark:hover:bg-gray-800"
           >
-            Next
+            {t("nextPage")}
           </button>
         </nav>
       )}

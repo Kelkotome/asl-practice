@@ -1,4 +1,5 @@
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 import type { SignCatalogEntry } from "@/lib/signs/types";
 import { getSignOfTheDay } from "@/lib/signs/sign-of-the-day";
 import DifficultyBadge from "./DifficultyBadge";
@@ -8,13 +9,14 @@ interface SignOfTheDayProps {
 }
 
 export default function SignOfTheDay({ catalog }: SignOfTheDayProps) {
+  const t = useTranslations("signs");
   const sign = getSignOfTheDay(catalog);
   if (!sign) return null;
 
   return (
     <div className="mt-16">
       <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6 text-center">
-        Sign of the Day
+        {t("signOfTheDay")}
       </h2>
       <Link
         href={`/signs/${sign.slug}`}
@@ -30,7 +32,7 @@ export default function SignOfTheDay({ catalog }: SignOfTheDayProps) {
             {sign.lexicalClass && <span>{sign.lexicalClass}</span>}
           </div>
           <span className="inline-flex items-center px-4 py-2 bg-brand-600 text-white rounded-lg text-sm font-medium hover:bg-brand-700 transition-colors">
-            Practice Now &rarr;
+            {t("practiceNow")}
           </span>
         </div>
       </Link>

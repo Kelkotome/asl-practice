@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 import type { SignCatalogEntry } from "@/lib/signs/types";
 import { useRecentlyPracticed } from "@/lib/progress/hooks";
 import DifficultyBadge from "@/components/signs/DifficultyBadge";
@@ -12,6 +13,7 @@ interface ContinuePracticingProps {
 export default function ContinuePracticing({
   catalog,
 }: ContinuePracticingProps) {
+  const t = useTranslations("progress");
   const recent = useRecentlyPracticed(6);
 
   if (recent.length === 0) return null;
@@ -26,7 +28,7 @@ export default function ContinuePracticing({
   return (
     <section className="mb-8">
       <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
-        Continue Practicing
+        {t("continuePracticing")}
       </h2>
       <div className="flex gap-3 overflow-x-auto pb-2">
         {recentSigns.map((sign) => (

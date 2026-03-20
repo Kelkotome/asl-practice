@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { signSlug, landmarks, duration } = body;
+  const { signSlug, landmarks, duration, locale } = body;
 
   if (!signSlug || !landmarks || !Array.isArray(landmarks)) {
     return NextResponse.json(
@@ -95,11 +95,25 @@ export async function POST(request: NextRequest) {
 
   const client = new Anthropic({ apiKey });
 
+  // Add language instruction for non-English locales
+  const localeLanguageMap: Record<string, string> = {
+    es: "Spanish",
+    fr: "French",
+    zh: "Chinese",
+    ko: "Korean",
+    ja: "Japanese",
+  };
+
+  let systemPrompt = SYSTEM_PROMPT;
+  if (locale && locale !== "en" && localeLanguageMap[locale]) {
+    systemPrompt += `\n\nIMPORTANT: Respond entirely in ${localeLanguageMap[locale]}. Keep ASL sign names and ASL-LEX technical terms in English.`;
+  }
+
   try {
     const stream = await client.messages.stream({
       model: "claude-haiku-4-5-20251001",
       max_tokens: 1024,
-      system: SYSTEM_PROMPT,
+      system: systemPrompt,
       messages: [{ role: "user", content: userPrompt }],
     });
 

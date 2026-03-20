@@ -1,9 +1,8 @@
 import type { SignDetail, LandmarkFrame } from "../signs/types";
-import { extractFeatures, type DetectedFeatures } from "../mediapipe/features";
+import { extractFeatures, type DetectedFeatures, type FingerState } from "../mediapipe/features";
 
 /**
  * Build deterministic context string from sign data + detected features.
- * Ported from lex_enrichment.py:80-122 (build_lex_context_for_prompt).
  */
 export function buildContext(
   sign: SignDetail,
@@ -76,32 +75,55 @@ export function buildContext(
   return sections.join("\n\n");
 }
 
+function formatFingerState(name: string, state: FingerState): string {
+  return `  ${name}: ${state.extended ? "extended" : "not extended"}, ${state.curl} (${state.angle}°)`;
+}
+
 function formatDetectedFeatures(f: DetectedFeatures): string {
   const lines: string[] = [
     "USER'S ATTEMPT (from MediaPipe landmarks):",
-    "NOTE: Hand region is estimated relative to the camera frame, NOT the body. Camera framing varies widely — do NOT critique hand location/region unless it clearly contradicts the reference. Focus feedback on handshape, movement, and fingers instead.",
+    "IMPORTANT: This data is from a webcam using MediaPipe — it is APPROXIMATE and often inaccurate. Camera angle, distance, lighting, and hand orientation all cause detection errors. Finger curl angles can be off by 30-40°. Palm orientation is especially unreliable. Give the learner the benefit of the doubt — if it roughly matches, assume they did it right. Hand region is relative to camera frame, NOT body position.",
   ];
 
   lines.push(`- Hands detected: ${f.handsDetected}`);
 
   if (f.dominantHand) {
-    lines.push(
-      `- Dominant hand confidence: ${f.dominantHand.avgScore.toFixed(2)}`
-    );
+    lines.push(`\nDominant hand:`);
+    lines.push(`- Confidence: ${f.dominantHand.avgScore.toFixed(2)}`);
     if (f.dominantHand.estimatedRegion)
-      lines.push(`- Hand region (frame-relative, unreliable): ${f.dominantHand.estimatedRegion}`);
-    if (f.dominantHand.fingersExtended)
-      lines.push(
-        `- Fingers extended: ${f.dominantHand.fingersExtended.join(", ")}`
-      );
+      lines.push(`- Region (frame-relative, unreliable): ${f.dominantHand.estimatedRegion}`);
+    lines.push(`- Palm orientation: ${f.dominantHand.palmOrientation}`);
+    lines.push(`- Fingers extended: ${f.dominantHand.fingersExtended.length > 0 ? f.dominantHand.fingersExtended.join(", ") : "none"}`);
+    lines.push(`- Finger spread: ${f.dominantHand.fingerSpread}`);
+
+    lines.push(`- Finger details:`);
+    for (const [name, state] of Object.entries(f.dominantHand.fingers)) {
+      lines.push(formatFingerState(name, state));
+    }
+  }
+
+  if (f.nonDominantHand) {
+    lines.push(`\nNon-dominant hand:`);
+    lines.push(`- Confidence: ${f.nonDominantHand.avgScore.toFixed(2)}`);
+    lines.push(`- Palm orientation: ${f.nonDominantHand.palmOrientation}`);
+    lines.push(`- Fingers extended: ${f.nonDominantHand.fingersExtended.length > 0 ? f.nonDominantHand.fingersExtended.join(", ") : "none"}`);
+
+    lines.push(`- Finger details:`);
+    for (const [name, state] of Object.entries(f.nonDominantHand.fingers)) {
+      lines.push(formatFingerState(name, state));
+    }
   }
 
   if (f.movement) {
-    lines.push(`- Movement type: ${f.movement.type}`);
-    lines.push(`- Movement magnitude: ${f.movement.magnitude.toFixed(3)}`);
+    lines.push(`\nMovement:`);
+    lines.push(`- Type: ${f.movement.type}`);
+    lines.push(`- Magnitude: ${f.movement.magnitude.toFixed(3)}`);
+    lines.push(`- Speed: ${f.movement.speed}`);
+    if (f.movement.direction)
+      lines.push(`- Direction: ${f.movement.direction}`);
   }
 
-  lines.push(`- Duration: ${f.duration.toFixed(1)}s`);
+  lines.push(`\n- Duration: ${f.duration.toFixed(1)}s`);
   lines.push(`- Frames captured: ${f.frameCount}`);
 
   return lines.join("\n");

@@ -66,4 +66,5 @@ export interface FeedbackRequest {
   signSlug: string;
   landmarks: LandmarkFrame[];
   duration: number;
+  locale?: string;
 }

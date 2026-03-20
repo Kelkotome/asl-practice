@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useTranslations } from "next-intl";
 
 interface ShareButtonProps {
   signName: string;
@@ -9,6 +10,7 @@ interface ShareButtonProps {
 }
 
 export default function ShareButton({ signName, practiceUrl, blogUrl }: ShareButtonProps) {
+  const t = useTranslations("signs");
   const [showMenu, setShowMenu] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -53,7 +55,7 @@ export default function ShareButton({ signName, practiceUrl, blogUrl }: ShareBut
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setShowMenu(!showMenu)}
-        aria-label="Share this sign"
+        aria-label={t("shareSign")}
         className="w-9 h-9 rounded-full flex items-center justify-center text-gray-400 dark:text-gray-500 hover:text-brand-600 transition-colors text-lg"
       >
         ↗
@@ -65,20 +67,20 @@ export default function ShareButton({ signName, practiceUrl, blogUrl }: ShareBut
             onClick={() => handleShare(practiceUrl, "practice")}
             className="w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
           >
-            <span className="font-medium">Share practice page</span>
-            <span className="block text-xs text-gray-400 mt-0.5">practice.deafened.org</span>
+            <span className="font-medium">{t("sharePractice")}</span>
+            <span className="block text-xs text-gray-400 mt-0.5">{t("sharePracticeHint")}</span>
             {copied === "practice" && (
-              <span className="text-xs text-green-600 ml-1">Copied!</span>
+              <span className="text-xs text-green-600 ml-1">{t("copied")}</span>
             )}
           </button>
           <button
             onClick={() => handleShare(blogUrl, "blog")}
             className="w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
           >
-            <span className="font-medium">Share tutorial</span>
-            <span className="block text-xs text-gray-400 mt-0.5">deafened.org</span>
+            <span className="font-medium">{t("shareTutorial")}</span>
+            <span className="block text-xs text-gray-400 mt-0.5">{t("shareTutorialHint")}</span>
             {copied === "blog" && (
-              <span className="text-xs text-green-600 ml-1">Copied!</span>
+              <span className="text-xs text-green-600 ml-1">{t("copied")}</span>
             )}
           </button>
         </div>

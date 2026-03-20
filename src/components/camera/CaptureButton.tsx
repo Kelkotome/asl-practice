@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 
 interface CaptureButtonProps {
   isRecording: boolean;
@@ -15,6 +16,7 @@ export default function CaptureButton({
   onStop,
   maxDuration = 5,
 }: CaptureButtonProps) {
+  const t = useTranslations("camera");
   const [elapsed, setElapsed] = useState(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -60,19 +62,19 @@ export default function CaptureButton({
           </div>
           <button
             onClick={onStop}
-            aria-label={`Stop recording, ${Math.ceil(maxDuration - elapsed)} seconds remaining`}
+            aria-label={t("stop", { seconds: Math.ceil(maxDuration - elapsed) })}
             className="px-6 py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 active:bg-red-800 transition-colors text-sm sm:text-base min-h-[44px]"
           >
-            Stop ({Math.ceil(maxDuration - elapsed)}s)
+            {t("stop", { seconds: Math.ceil(maxDuration - elapsed) })}
           </button>
         </>
       ) : (
         <button
           onClick={onStart}
-          aria-label={`Start recording sign, up to ${maxDuration} seconds`}
+          aria-label={t("recordSign", { seconds: maxDuration })}
           className="px-6 py-3 bg-brand-600 text-white rounded-lg font-medium hover:bg-brand-700 active:bg-brand-800 transition-colors text-sm sm:text-base min-h-[44px]"
         >
-          Record Sign (up to {maxDuration}s)
+          {t("recordSign", { seconds: maxDuration })}
         </button>
       )}
     </div>

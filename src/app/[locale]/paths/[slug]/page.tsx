@@ -1,15 +1,17 @@
 import * as fs from "fs";
 import * as path from "path";
 import type { Metadata } from "next";
-import Link from "next/link";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Link } from "@/i18n/routing";
 import type { SignCatalogEntry } from "@/lib/signs/types";
 import { LEARNING_PATHS } from "@/lib/paths/data";
 import { resolvePathSigns } from "@/lib/paths/utils";
+import { locales, defaultLocale } from "@/i18n/config";
 import ProgressBar from "@/components/paths/ProgressBar";
 import PathSignList from "@/components/paths/PathSignList";
 
 interface PageProps {
-  params: { slug: string };
+  params: Promise<{ locale: string; slug: string }>;
 }
 
 function loadCatalog(): SignCatalogEntry[] {
@@ -23,27 +25,46 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const pathData = LEARNING_PATHS.find((p) => p.slug === params.slug);
-  if (!pathData) return { title: "Path Not Found" };
+  const { locale, slug } = await params;
+  const pathData = LEARNING_PATHS.find((p) => p.slug === slug);
+  const t = await getTranslations({ locale, namespace: "metadata" });
+  const tPaths = await getTranslations({ locale, namespace: "pathsPage" });
+
+  if (!pathData) return { title: t("pathNotFound") };
+
+  const pathName = tPaths(`pathNames.${pathData.slug}`);
+  const basePath = `/paths/${pathData.slug}`;
 
   return {
-    title: `${pathData.name} — ASL Practice`,
-    description: pathData.description,
+    title: t("pathTitle", { name: pathName }),
+    description: tPaths(`pathDescriptions.${pathData.slug}`),
     openGraph: {
-      url: `https://practice.deafened.org/paths/${pathData.slug}`,
+      url: `https://practice.deafened.org${basePath}`,
+    },
+    alternates: {
+      languages: Object.fromEntries(
+        locales.map((l) => [
+          l,
+          `https://practice.deafened.org${l === defaultLocale ? "" : `/${l}`}${basePath}`,
+        ])
+      ),
     },
   };
 }
 
 export default async function PathDetailPage({ params }: PageProps) {
-  const pathData = LEARNING_PATHS.find((p) => p.slug === params.slug);
+  const { locale, slug } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: "pathsPage" });
+
+  const pathData = LEARNING_PATHS.find((p) => p.slug === slug);
 
   if (!pathData) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-16 text-center">
-        <h1 className="text-2xl font-bold mb-4">Path Not Found</h1>
+        <h1 className="text-2xl font-bold mb-4">{t("notFound")}</h1>
         <p className="text-gray-600 dark:text-gray-400">
-          The learning path &quot;{params.slug}&quot; was not found.
+          {t("notFoundDescription", { slug })}
         </p>
       </div>
     );
@@ -51,6 +72,8 @@ export default async function PathDetailPage({ params }: PageProps) {
 
   const catalog = loadCatalog();
   const signs = resolvePathSigns(pathData, catalog);
+  const pathName = t(`pathNames.${pathData.slug}`);
+  const pathDescription = t(`pathDescriptions.${pathData.slug}`);
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -58,7 +81,7 @@ export default async function PathDetailPage({ params }: PageProps) {
         href="/paths"
         className="text-sm text-brand-600 hover:underline mb-4 inline-block"
       >
-        ← All Learning Paths
+        {t("allPaths")}
       </Link>
 
       <div className="mb-6">
@@ -67,11 +90,11 @@ export default async function PathDetailPage({ params }: PageProps) {
             {pathData.icon}
           </span>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-            {pathData.name}
+            {pathName}
           </h1>
         </div>
         <p className="text-gray-600 dark:text-gray-400 mb-4">
-          {pathData.description}
+          {pathDescription}
         </p>
         <ProgressBar signSlugs={pathData.signSlugs} />
       </div>

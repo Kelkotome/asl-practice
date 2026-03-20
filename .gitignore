@@ -21,3 +21,4 @@ next-env.d.ts
 
 # data (regenerate with: npm run export-signs)
 # data/sign-details/
+.vercel

@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 import type { SignCatalogEntry } from "@/lib/signs/types";
 import { useFavorites } from "@/lib/favorites/hooks";
 import FavoriteButton from "./FavoriteButton";
@@ -10,6 +11,7 @@ interface FavoritesListProps {
 }
 
 export default function FavoritesList({ catalog }: FavoritesListProps) {
+  const t = useTranslations("signs");
   const { favorites } = useFavorites();
 
   if (favorites.size === 0) return null;
@@ -20,7 +22,7 @@ export default function FavoritesList({ catalog }: FavoritesListProps) {
   return (
     <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4">
       <h2 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">
-        My Saved Signs ({favoriteSigns.length})
+        {t("savedSigns", { count: favoriteSigns.length })}
       </h2>
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
         {favoriteSigns.map((sign) => (
@@ -41,7 +43,7 @@ export default function FavoritesList({ catalog }: FavoritesListProps) {
                   href={`/signs/${sign.slug}`}
                   className="text-brand-600 hover:underline"
                 >
-                  Practice
+                  {t("practiceBtn")}
                 </Link>
                 {sign.blogUrl && (
                   <a
@@ -50,7 +52,7 @@ export default function FavoritesList({ catalog }: FavoritesListProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Tutorial
+                    {t("tutorialBtn")}
                   </a>
                 )}
               </div>

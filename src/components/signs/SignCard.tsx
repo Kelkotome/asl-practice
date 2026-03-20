@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 import type { SignCatalogEntry } from "@/lib/signs/types";
 import DifficultyBadge from "./DifficultyBadge";
 import FavoriteButton from "./FavoriteButton";
@@ -8,6 +9,7 @@ import PracticeBadge from "@/components/progress/PracticeBadge";
 import { usePracticeProgress } from "@/lib/progress/hooks";
 
 export default function SignCard({ sign }: { sign: SignCatalogEntry }) {
+  const t = useTranslations("signs");
   const progress = usePracticeProgress();
   const practiceCount = progress[sign.slug]?.count ?? 0;
 
@@ -47,12 +49,12 @@ export default function SignCard({ sign }: { sign: SignCatalogEntry }) {
       <div className="mt-2 flex items-center gap-2">
         {sign.videoId && (
           <span className="text-xs text-brand-600 dark:text-brand-400">
-            Video available
+            {t("videoAvailable")}
           </span>
         )}
         {sign.hasLexData && (
           <span className="text-xs text-emerald-600 dark:text-emerald-400">
-            ASL-LEX data
+            {t("lexData")}
           </span>
         )}
       </div>

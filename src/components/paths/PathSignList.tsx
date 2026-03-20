@@ -1,11 +1,13 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 import type { SignCatalogEntry } from "@/lib/signs/types";
 import DifficultyBadge from "@/components/signs/DifficultyBadge";
 import { usePracticeProgress } from "@/lib/progress/hooks";
 
 export default function PathSignList({ signs, pathSlug }: { signs: SignCatalogEntry[]; pathSlug: string }) {
+  const t = useTranslations("pathsPage");
   const progress = usePracticeProgress();
 
   return (
@@ -27,21 +29,21 @@ export default function PathSignList({ signs, pathSlug }: { signs: SignCatalogEn
               <div className="flex items-center gap-2">
                 {sign.videoId && (
                   <span className="text-xs text-brand-600 dark:text-brand-400">
-                    Video
+                    {t("video")}
                   </span>
                 )}
                 {sign.hasLexData && (
                   <span className="text-xs text-emerald-600 dark:text-emerald-400">
-                    ASL-LEX
+                    {t("lexData")}
                   </span>
                 )}
                 <DifficultyBadge difficulty={sign.difficulty} />
                 {practiced ? (
-                  <span className="text-green-600 dark:text-green-400" aria-label="Practiced">
+                  <span className="text-green-600 dark:text-green-400" aria-label={t("practiced")}>
                     ✓
                   </span>
                 ) : (
-                  <span className="text-gray-300 dark:text-gray-600" aria-label="Not yet practiced">
+                  <span className="text-gray-300 dark:text-gray-600" aria-label={t("notPracticed")}>
                     ○
                   </span>
                 )}

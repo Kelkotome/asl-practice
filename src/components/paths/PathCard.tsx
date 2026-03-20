@@ -1,11 +1,14 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 import type { LearningPath } from "@/lib/paths/types";
 import DifficultyBadge from "@/components/signs/DifficultyBadge";
 import ProgressBar from "./ProgressBar";
 
 export default function PathCard({ path }: { path: LearningPath }) {
+  const t = useTranslations("pathsPage");
+
   return (
     <Link
       href={`/paths/${path.slug}`}
@@ -17,16 +20,16 @@ export default function PathCard({ path }: { path: LearningPath }) {
             {path.icon}
           </span>
           <h3 className="font-semibold text-gray-900 dark:text-gray-100">
-            {path.name}
+            {t(`pathNames.${path.slug}`)}
           </h3>
         </div>
         <DifficultyBadge difficulty={path.difficulty} />
       </div>
       <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-        {path.description}
+        {t(`pathDescriptions.${path.slug}`)}
       </p>
       <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
-        {path.signSlugs.length} signs
+        {t("signCount", { count: path.signSlugs.length })}
       </p>
       <ProgressBar signSlugs={path.signSlugs} />
     </Link>

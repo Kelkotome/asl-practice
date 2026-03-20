@@ -1,8 +1,10 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { usePathProgress } from "@/lib/paths/hooks";
 
 export default function ProgressBar({ signSlugs }: { signSlugs: string[] }) {
+  const t = useTranslations("progress");
   const { total, practiced, percentage } = usePathProgress(signSlugs);
 
   return (
@@ -14,7 +16,7 @@ export default function ProgressBar({ signSlugs }: { signSlugs: string[] }) {
         />
       </div>
       <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-        {practiced} of {total} practiced
+        {t("practicedOf", { practiced, total })}
       </p>
     </div>
   );

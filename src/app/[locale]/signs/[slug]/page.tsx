@@ -2,12 +2,14 @@ import * as fs from "fs";
 import * as path from "path";
 import { Suspense } from "react";
 import type { Metadata } from "next";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { SignDetail, SignCatalogEntry } from "@/lib/signs/types";
 import { getRelatedSigns } from "@/lib/signs/related";
+import { locales, defaultLocale } from "@/i18n/config";
 import PracticeClient from "./PracticeClient";
 
 interface PageProps {
-  params: { slug: string };
+  params: Promise<{ locale: string; slug: string }>;
 }
 
 function loadSignDetail(slug: string): SignDetail | null {
@@ -37,32 +39,49 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const sign = loadSignDetail(params.slug);
-  if (!sign) return { title: "Sign Not Found" };
+  const { locale, slug } = await params;
+  const sign = loadSignDetail(slug);
+  const t = await getTranslations({ locale, namespace: "metadata" });
 
-  const title = `Practice "${sign.name}" in ASL — ASL Practice`;
-  const description = `Practice the ASL sign for "${sign.name}" with real-time camera feedback and AI coaching. ${sign.signType || ""} sign${sign.majorLocation ? `, location: ${sign.majorLocation}` : ""}.`;
+  if (!sign) return { title: t("signNotFound") };
+
+  const details = `${sign.signType || ""} sign${sign.majorLocation ? `, location: ${sign.majorLocation}` : ""}`;
+  const title = t("practiceTitle", { name: sign.name });
+  const description = t("practiceDescription", { name: sign.name, details });
+  const basePath = `/signs/${sign.slug}`;
 
   return {
     title,
     description,
     openGraph: {
-      url: `https://practice.deafened.org/signs/${sign.slug}`,
+      url: `https://practice.deafened.org${basePath}`,
       title,
       description,
+    },
+    alternates: {
+      languages: Object.fromEntries(
+        locales.map((l) => [
+          l,
+          `https://practice.deafened.org${l === defaultLocale ? "" : `/${l}`}${basePath}`,
+        ])
+      ),
     },
   };
 }
 
 export default async function PracticePage({ params }: PageProps) {
-  const sign = loadSignDetail(params.slug);
+  const { locale, slug } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: "metadata" });
+
+  const sign = loadSignDetail(slug);
 
   if (!sign) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-16 text-center">
-        <h1 className="text-2xl font-bold mb-4">Sign Not Found</h1>
+        <h1 className="text-2xl font-bold mb-4">{t("signNotFound")}</h1>
         <p className="text-gray-600 dark:text-gray-400">
-          The sign &quot;{params.slug}&quot; was not found.
+          The sign &quot;{slug}&quot; was not found.
         </p>
       </div>
     );
